@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="module">
+          import { detectConcordiumProvider } from 'https://unpkg.com/@concordium/browser-wallet-api-helpers';
+          async function connectWallet() {
+            try {
+              console.log('window.concordium:', window.concordium);
+              const provider = await detectConcordiumProvider(3000);
+              console.log('Provider detected:', provider);
+              const account = await provider.connect();
+              console.log('Connected account:', account);
+            } catch (error) {
+              console.error('Error:', error);
+            }
+          }
+        </script>
+
+    </head>
+<body>
+  <button onclick="connectWallet()">Connect Wallet</button>
+</body>
+</html>
