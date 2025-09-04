@@ -1,5 +1,5 @@
 [build]
-  command = "npm install --no-fund --no-audit && npm run build"
+  command = "npm install --legacy-peer-deps --no-fund --no-audit && npm run build"
   publish = "dist"
 
 [build.environment]
@@ -11,13 +11,13 @@
   status = 200
 
 [context.production]
-  command = "npm install --no-fund --no-audit && npm run build"
+  command = "npm install --legacy-peer-deps --no-fund --no-audit && npm run build"
 
 [context.deploy-preview]
-  command = "npm install --no-fund --no-audit && npm run build"
+  command = "npm install --legacy-peer-deps --no-fund --no-audit && npm run build"
 
 [context.branch-deploy]
-  command = "npm install --no-fund --no-audit && npm run build"
+  command = "npm install --legacy-peer-deps --no-fund --no-audit && npm run build"
 
 [[headers]]
   for = "/assets/*"
