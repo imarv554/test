@@ -146,7 +146,7 @@ export function AdminDashboard({ onNavigateHome, onLogout }: AdminDashboardProps
     alert('Product added successfully!');
   };
 
-  const handleVendorSubmit = (e: React.FormEvent) => {
+  const handleVendorSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Here you would normally save to your database
     console.log('Adding vendor:', newVendor);
