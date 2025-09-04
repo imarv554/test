@@ -11,13 +11,13 @@
   status = 200
 
 [context.production]
-  command = "bun run build"
+  command = "npm ci && npm run build"
 
 [context.deploy-preview]
-  command = "bun run build"
+  command = "npm ci && npm run build"
 
 [context.branch-deploy]
-  command = "bun run build"
+  command = "npm ci && npm run build"
 
 [[headers]]
   for = "/assets/*"
