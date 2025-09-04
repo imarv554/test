@@ -42,6 +42,7 @@ import { useConcordium } from "@/contexts/ConcordiumContext";
 import { useAvalanche } from "@/contexts/AvalancheContext";
 import { convertUsdToAvax, convertUsdToCcd } from "@/utils/exchangeRates";
 import { ethers } from "ethers";
+import { createEscrowOrder } from "@/lib/avalanche";
 
 declare global {
   interface Window {
@@ -98,6 +99,7 @@ export function CartSheet() {
     setCheckoutDialog(true);
   };
 
+  /* Concordium disabled: retain function for backward compatibility but hide in UI */
   const handleCCDCheckout = async () => {
     if (!concordiumState.isConnected) {
       try {
@@ -290,54 +292,11 @@ export function CartSheet() {
     if (!avalancheState.isConnected || !avalancheState.account) {
       throw new Error('Avalanche wallet not connected');
     }
-    if (!avalancheState.signer) {
-      throw new Error('Avalanche provider not available');
-    }
-    const recipientAddress = import.meta.env.VITE_AVALANCHE_ADDRESS || '0x65b7a307a7e67e38840b91f9a36bf8dfe6e02901';
     const totalAmount = state.totalAmount + (hasEscrowItems ? state.totalAmount * 0.02 : 0);
-    const avaxAmount = await convertUsdToAvax(totalAmount);
-    const avaxAmountStr = avaxAmount.toFixed(6);
-    return new Promise((resolve, reject) => {
-      try {
-        const transferData = {
-          amount: avaxAmountStr,
-          toAddress: recipientAddress,
-          fromAddress: avalancheState.account,
-          metadata: {
-            orderId: `credify_${Date.now()}`,
-            customerName: customerInfo.name,
-            customerEmail: customerInfo.email,
-            items: state.items.map(item => ({
-              productId: item.product.id,
-              title: item.product.title,
-              quantity: item.quantity,
-              price: item.product.price
-            }))
-          }
-        };
-        avalancheState.signer!.sendTransaction({
-          to: recipientAddress,
-          value: ethers.parseEther(avaxAmountStr),
-          gasLimit: 21000
-        }).then((tx) => {
-          return tx.wait();
-        }).then((receipt) => {
-          if (!receipt) {
-            throw new Error('Transaction receipt not received');
-          }
-          resolve({
-            success: true,
-            txHash: receipt.hash,
-            amount: avaxAmountStr,
-            recipient: recipientAddress
-          });
-        }).catch((error) => {
-          reject(new Error(`AVAX payment failed: ${error.message || 'Unknown error'}`));
-        });
-      } catch (error) {
-        reject(error);
-      }
-    });
+    const vendorAddr = import.meta.env.VITE_DEFAULT_VENDOR || avalancheState.account; // placeholder
+    const orderRef = `credify_${Date.now()}`;
+    await createEscrowOrder(vendorAddr, totalAmount, orderRef);
+    return { success: true, txHash: orderRef } as any;
   };
 
   const handleDialogClose = () => {
@@ -524,29 +483,28 @@ export function CartSheet() {
                   Pay with Card
                 </Button>
                 
-                <Button 
+                {/* CCD hidden */}
+                {/* <Button 
                   variant="outline" 
                   className="w-full border-primary/30 hover:bg-primary/5"
                   onClick={handleCCDCheckout}
                 >
                   <Coins className="w-4 h-4 mr-2" />
                   Pay with CCD {!concordiumState.isConnected && '(Connect Wallet)'}
-                </Button>
+                </Button> */}
                 
-                {false && (
                 <Button 
                   variant="outline" 
                   className="w-full border-orange-300 hover:bg-orange-50 text-orange-700 border-2"
                   onClick={handleAVAXCheckout}
                 >
                   <Zap className="w-4 h-4 mr-2" />
-                  Pay with AVAX {!avalancheState.isConnected && '(Connect MetaMask)'}
+                  Pay with USDC (Avalanche) {!avalancheState.isConnected && '(Connect MetaMask)'}
                 </Button>
-                )}
                 
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <CheckCircle className="w-3 h-3 text-green-500" />
-                  <span>Secure payment powered by PayStack, Concordium & Avalanche blockchain</span>
+                  <span>Secure payment powered by PayStack & Avalanche escrow</span>
                 </div>
               </div>
 
