@@ -6,6 +6,7 @@ import productsRouter from "./routes/products";
 import ordersRouter from "./routes/orders";
 import healthRouter from "./routes/health";
 import verifyRouter from "./routes/verify";
+import vendorsRouter from "./routes/vendors";
 import Product from "./models/Product";
 
 dotenv.config();
@@ -18,6 +19,7 @@ app.use("/api/health", healthRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/orders", ordersRouter);
 app.use("/api/verify-payment", verifyRouter);
+app.use("/api/vendors", vendorsRouter);
 
 const PORT = Number(process.env.PORT || 4000);
 

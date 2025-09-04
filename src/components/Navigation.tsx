@@ -49,14 +49,22 @@ export function Navigation() {
             >
               Marketplace
             </NavLink>
-            {/* <NavLink 
-              to="/order-tracking" 
+            <NavLink 
+              to="/vendor-login" 
               className={({ isActive }) => 
                 `text-sm hover:text-primary transition-colors font-medium ${isActive ? 'text-primary' : ''}`
               }
             >
-              Track Your Order
-            </NavLink> */}
+              Vendor Login
+            </NavLink>
+            <NavLink 
+              to="/credify-admin-secure" 
+              className={({ isActive }) => 
+                `text-sm hover:text-primary transition-colors font-medium ${isActive ? 'text-primary' : ''}`
+              }
+            >
+              Admin
+            </NavLink>
             <WalletConnection />
           </div>
           
@@ -97,15 +105,24 @@ export function Navigation() {
               >
                 Marketplace
               </NavLink>
-              {/* <NavLink 
-                to="/order-tracking" 
+              <NavLink 
+                to="/vendor-login" 
                 className={({ isActive }) => 
                   `text-sm hover:text-primary transition-colors py-2 text-left font-medium ${isActive ? 'text-primary' : ''}`
                 }
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Track Your Order
-              </NavLink> */}
+                Vendor Login
+              </NavLink>
+              <NavLink 
+                to="/credify-admin-secure" 
+                className={({ isActive }) => 
+                  `text-sm hover:text-primary transition-colors py-2 text-left font-medium ${isActive ? 'text-primary' : ''}`
+                }
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Admin
+              </NavLink>
               <div className="py-2">
                 <WalletConnection />
               </div>

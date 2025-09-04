@@ -13,6 +13,8 @@ import { SellerDashboard } from "@/pages/SellerDashboard";
 import { AdminDashboard } from "@/pages/AdminDashboard";
 import { VendorRegistration } from "@/pages/VendorRegistration";
 import { OrderTracking } from "@/pages/OrderTracking";
+import AdminLogin from "@/pages/AdminLogin";
+import VendorLogin from "@/pages/VendorLogin";
 
 export default function App() {
   const location = useLocation();
@@ -51,8 +53,10 @@ export default function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/marketplace" element={<MarketplacePage />} />
                 <Route path="/seller" element={<SellerDashboard />} />
-                <Route path="/admin-dashboard" element={<AdminDashboard />} />
-                <Route path="/vendor-registration" element={<VendorRegistration />} />
+                <Route path="/vendor-login" element={<VendorLogin />} />
+                <Route path="/admin-login" element={<AdminLogin onLoginSuccess={() => { window.location.href = '/admin-dashboard'; }} onNavigateHome={() => { window.location.href = '/'; }} />} />
+                <Route path="/admin-dashboard" element={<AdminDashboard onNavigateHome={() => { window.location.href = '/'; }} onLogout={() => { window.location.href = '/admin-login'; }} />} />
+                <Route path="/vendor-registration" element={<VendorRegistration onNavigateHome={() => { window.location.href = '/'; }} />} />
                 <Route path="/order-tracking" element={<OrderTracking />} />
                 <Route path="/credify-admin-secure" element={<Navigate to="/admin-login" replace />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
