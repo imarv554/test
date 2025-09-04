@@ -163,6 +163,23 @@ export function AdminDashboard({ onNavigateHome, onLogout }: AdminDashboardProps
     
     // In a real app, you'd save to your database here
     localStorage.setItem(`vendor_${vendorData.id}`, JSON.stringify(vendorData));
+
+    // Persist to backend and trigger confirmation email to vendor
+    try {
+      await fetch('/api/vendors/onboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          businessName: vendorData.businessName,
+          name: vendorData.name,
+          email: vendorData.email,
+          concordiumAddress: vendorData.concordiumAddress,
+          phone: vendorData.phone
+        })
+      });
+    } catch (e) {
+      console.warn('Backend vendor onboard failed:', e);
+    }
     
     // Reset form and close dialog
     setNewVendor({

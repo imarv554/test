@@ -316,8 +316,30 @@ export function VendorRegistration({ onNavigateHome }: VendorRegistrationProps) 
       productsCount: 0
     };
 
-    // Save to localStorage (replace with database call in production)
+    // Save to localStorage (temporary)
     localStorage.setItem(`vendor_${vendorData.id}`, JSON.stringify(vendorData));
+
+    // Persist to backend and trigger confirmation email
+    try {
+      await fetch('/api/vendors/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          businessName: formData.businessName,
+          ownerName: formData.ownerName,
+          email: formData.email,
+          phone: formData.phone,
+          website: formData.website,
+          businessAddress: formData.businessAddress,
+          concordiumAddress: formData.concordiumAddress,
+          avalancheAddress: formData.avalancheAddress,
+          onboardedBy: 'self'
+        })
+      });
+    } catch (e) {
+      console.warn('Backend vendor registration failed:', e);
+    }
+
     console.log('Vendor registration saved:', vendorData);
   };
 
