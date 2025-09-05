@@ -6,6 +6,7 @@ export interface IProduct extends Document {
   price: number;
   currency: "USD" | "EUR" | "CCD";
   images: string[];
+  vendorWallet?: string;
   category: {
     id: string;
     name: string;
@@ -40,6 +41,7 @@ const ProductSchema = new Schema<IProduct>(
     price: { type: Number, required: true },
     currency: { type: String, enum: ["USD", "EUR", "CCD"], default: "USD" },
     images: { type: [String], default: [] },
+    vendorWallet: { type: String, required: false },
     category: {
       id: { type: String, required: true },
       name: { type: String, required: true },

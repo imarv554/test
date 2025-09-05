@@ -294,7 +294,16 @@ export function CartSheet() {
       throw new Error('Avalanche wallet not connected');
     }
     const totalAmount = state.totalAmount + (hasEscrowItems ? state.totalAmount * 0.02 : 0);
-    const vendorAddr = import.meta.env.VITE_DEFAULT_VENDOR || avalancheState.account; // placeholder
+    const vendorWallets = Array.from(new Set(
+      state.items
+        .map((i) => (i.product as any).vendorWallet)
+        .filter((v): v is string => !!v)
+        .map((v) => v.toLowerCase())
+    ));
+    if (vendorWallets.length !== 1) {
+      throw new Error('Cart must contain items from a single vendor with a vendor wallet set');
+    }
+    const vendorAddr = vendorWallets[0];
     const ref = `credify_${Date.now()}`;
     await createEscrowOrder(vendorAddr, totalAmount, ref);
     setOrderRef(ref);
