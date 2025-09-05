@@ -410,10 +410,18 @@ export function ConcordiumProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useConcordium() {
+export function useConcordium(): ConcordiumContextType {
   const context = useContext(ConcordiumContext);
   if (context === undefined) {
-    throw new Error('useConcordium must be used within a ConcordiumProvider');
+    return {
+      state: initialState,
+      connect: async () => { throw new Error('Concordium is disabled'); },
+      disconnect: () => {},
+      signMessage: async () => null,
+      verifyAge: async () => false,
+      verifyIdentity: async () => false,
+      getAccountAddress: () => null,
+    } as ConcordiumContextType;
   }
   return context;
 }
