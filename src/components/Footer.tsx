@@ -12,7 +12,7 @@ export function Footer() {
             <span className="text-xs text-muted-foreground ml-2">© 2025</span>
           </div>
           <div className="text-xs text-muted-foreground text-center md:text-right">
-            Powered by Concordium Mainnet • Built for the future of commerce
+            Powered by Avalanche C-Chain • USDT Escrow
           </div>
         </div>
       </div>
