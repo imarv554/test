@@ -7,8 +7,8 @@ async function main() {
 
   const owner = process.env.OWNER_ADDRESS || deployer.address;
   const feeRecipient = process.env.FEE_RECIPIENT || deployer.address;
-  const feeBps = Number(process.env.FEE_BPS || 200); // 2%
-  const USDC = process.env.USDC || "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E"; // Avalanche USDC
+  const feeBps = Number(process.env.FEE_BPS || 500); // 5%
+  const USDT = process.env.USDT || "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7"; // Avalanche USDT
 
   const VendorPass = await ethers.getContractFactory("VendorPass");
   const vendorPass = await VendorPass.deploy(owner);
@@ -16,7 +16,7 @@ async function main() {
   console.log("VendorPass:", await vendorPass.getAddress());
 
   const Escrow = await ethers.getContractFactory("EscrowUSDC");
-  const escrow = await Escrow.deploy(USDC, await vendorPass.getAddress(), feeRecipient, feeBps, owner);
+  const escrow = await Escrow.deploy(USDT, await vendorPass.getAddress(), feeRecipient, feeBps, owner);
   await escrow.waitForDeployment();
   console.log("EscrowUSDC:", await escrow.getAddress());
 
