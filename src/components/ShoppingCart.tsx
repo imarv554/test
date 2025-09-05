@@ -42,7 +42,7 @@ import { useConcordium } from "@/contexts/ConcordiumContext";
 import { useAvalanche } from "@/contexts/AvalancheContext";
 import { convertUsdToAvax, convertUsdToCcd } from "@/utils/exchangeRates";
 import { ethers } from "ethers";
-import { createEscrowOrder } from "@/lib/avalanche";
+import { createEscrowOrder, releaseEscrow } from "@/lib/avalanche";
 
 declare global {
   interface Window {
@@ -71,6 +71,7 @@ export function CartSheet() {
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'ccd' | 'avax' | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const [orderRef, setOrderRef] = useState<string | null>(null);
   const [customerInfo, setCustomerInfo] = useState({
     name: '',
     email: '',
@@ -158,7 +159,7 @@ export function CartSheet() {
         await createOrder('ccd', r?.txHash);
       } else if (paymentMethod === 'avax') {
         const r: any = await processAVAXPayment();
-        await createOrder('avax', r?.txHash);
+        await createOrder('avax', r?.txHash || orderRef || undefined as any);
       }
       clearCart();
       setOrderSuccess(true);
@@ -294,9 +295,10 @@ export function CartSheet() {
     }
     const totalAmount = state.totalAmount + (hasEscrowItems ? state.totalAmount * 0.02 : 0);
     const vendorAddr = import.meta.env.VITE_DEFAULT_VENDOR || avalancheState.account; // placeholder
-    const orderRef = `credify_${Date.now()}`;
-    await createEscrowOrder(vendorAddr, totalAmount, orderRef);
-    return { success: true, txHash: orderRef } as any;
+    const ref = `credify_${Date.now()}`;
+    await createEscrowOrder(vendorAddr, totalAmount, ref);
+    setOrderRef(ref);
+    return { success: true, txHash: ref } as any;
   };
 
   const handleDialogClose = () => {
@@ -560,13 +562,31 @@ export function CartSheet() {
                   <CheckCircle className="w-8 h-8 text-green-600" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Payment Successful!</h3>
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="text-sm text-muted-foreground mb-2">
                   Order total: {formatPrice(state.totalAmount + (hasEscrowItems ? state.totalAmount * 0.02 : 0))}
                 </p>
-                <div className="text-xs text-muted-foreground space-y-1">
-                  <p>• You'll receive an email confirmation shortly</p>
-                  <p>• Track your order in the seller dashboard</p>
-                  <p>• Escrow protection is active for eligible items</p>
+                {orderRef && (
+                  <p className="text-xs text-muted-foreground mb-4">Order Ref: {orderRef}</p>
+                )}
+                <div className="flex gap-2 justify-center">
+                  <Button
+                    variant="outline"
+                    disabled={!orderRef || isProcessing}
+                    onClick={async () => {
+                      if (!orderRef) return;
+                      try {
+                        setIsProcessing(true);
+                        await releaseEscrow(orderRef);
+                        alert('Escrow released to vendor');
+                      } catch (e: any) {
+                        alert(`Release failed: ${e?.message || e}`);
+                      } finally {
+                        setIsProcessing(false);
+                      }
+                    }}
+                  >
+                    Release Escrow Now
+                  </Button>
                 </div>
               </div>
             </div>
