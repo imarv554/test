@@ -38,10 +38,10 @@ import {
   Zap
 } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
-import { useConcordium } from "@/contexts/ConcordiumContext";
+
 import { useAvalanche } from "@/contexts/AvalancheContext";
-import { convertUsdToAvax, convertUsdToCcd } from "@/utils/exchangeRates";
-import { ethers } from "ethers";
+
+
 import { createEscrowOrder, releaseEscrow } from "@/lib/avalanche";
 
 declare global {
@@ -65,10 +65,10 @@ declare global {
 
 export function CartSheet() {
   const { state, updateQuantity, removeItem, clearCart, toggleCart, closeCart } = useCart();
-  const { state: concordiumState, connect: connectWallet } = useConcordium();
+
   const { state: avalancheState, connect: connectAvalanche } = useAvalanche();
   const [checkoutDialog, setCheckoutDialog] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'ccd' | 'avax' | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'avax' | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderRef, setOrderRef] = useState<string | null>(null);
@@ -95,26 +95,12 @@ export function CartSheet() {
   const hasAgeRestrictedItems = state.items.some(item => item.product.ageRestriction);
   const hasEscrowItems = state.items.some(item => item.product.escrowRequired);
 
-  const handleCheckout = (method: 'card' | 'ccd' | 'avax') => {
+  const handleCheckout = (method: 'card' | 'avax') => {
     setPaymentMethod(method);
     setCheckoutDialog(true);
   };
 
-  /* Concordium disabled: retain function for backward compatibility but hide in UI */
-  const handleCCDCheckout = async () => {
-    if (!concordiumState.isConnected) {
-      try {
-        await connectWallet();
-        setPaymentMethod('ccd');
-        setCheckoutDialog(true);
-      } catch (error) {
-        console.error('Failed to connect wallet:', error);
-        handleCheckout('ccd');
-      }
-    } else {
-      handleCheckout('ccd');
-    }
-  };
+
 
   const handleAVAXCheckout = async () => {
     if (!avalancheState.isConnected) {
@@ -131,7 +117,7 @@ export function CartSheet() {
     }
   };
 
-  const createOrder = async (method: 'card' | 'ccd' | 'avax', reference?: string) => {
+  const createOrder = async (method: 'card' | 'avax', reference?: string) => {
     const payload = {
       customer: customerInfo,
       payment: { method, reference },
@@ -142,7 +128,7 @@ export function CartSheet() {
         quantity: item.quantity,
         escrowRequired: item.product.escrowRequired
       })),
-      walletAddress: method === 'ccd' ? concordiumState.account : method === 'avax' ? avalancheState.account : undefined
+      walletAddress: method === 'avax' ? avalancheState.account : undefined
     };
     await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
   };
@@ -154,9 +140,6 @@ export function CartSheet() {
       if (paymentMethod === 'card') {
         const r: any = await initiatePaystackPayment();
         await createOrder('card', r?.reference);
-      } else if (paymentMethod === 'ccd') {
-        const r: any = await processCCDPayment();
-        await createOrder('ccd', r?.txHash);
       } else if (paymentMethod === 'avax') {
         const r: any = await processAVAXPayment();
         await createOrder('avax', r?.txHash || orderRef || undefined as any);
@@ -246,48 +229,7 @@ export function CartSheet() {
     }
   };
 
-  const processCCDPayment = async () => {
-    if (!concordiumState.isConnected || !concordiumState.account) {
-      throw new Error('Wallet not connected');
-    }
-    if (!concordiumState.provider) {
-      throw new Error('Concordium provider not available');
-    }
-    const recipientAddress = import.meta.env.VITE_CONCORDIUM_ADDRESS || '3SwtbfyHrT68giUKV6FzDAxBBPo9xbsLgjG34U3UXfJrNJFxbL';
-    const totalAmount = state.totalAmount + (hasEscrowItems ? state.totalAmount * 0.02 : 0);
-    const ccdAmount = await convertUsdToCcd(totalAmount);
-    const microCcdAmount = Math.round(ccdAmount * 1000000);
-    return new Promise((resolve, reject) => {
-      try {
-        const transferData = {
-          amount: microCcdAmount,
-          toAddress: recipientAddress,
-          fromAddress: concordiumState.account,
-          metadata: {
-            orderId: `credify_${Date.now()}`,
-            customerName: customerInfo.name,
-            customerEmail: customerInfo.email,
-            items: state.items.map(item => ({
-              productId: item.product.id,
-              title: item.product.title,
-              quantity: item.quantity,
-              price: item.product.price
-            }))
-          }
-        };
-        setTimeout(() => {
-          resolve({
-            success: true,
-            txHash: `tx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-            amount: microCcdAmount,
-            recipient: recipientAddress
-          });
-        }, 3000);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  };
+
 
   const processAVAXPayment = async () => {
     if (!avalancheState.isConnected || !avalancheState.account) {
@@ -678,23 +620,7 @@ export function CartSheet() {
                 </div>
               </div>
 
-              {paymentMethod === 'ccd' && (
-                <div className="flex items-center gap-2 text-sm text-blue-600 bg-blue-50 dark:bg-blue-950/20 p-3 rounded">
-                  <Coins className="w-4 h-4" />
-                  <div className="flex-1">
-                    <p className="font-medium">Concordium CCD Payment</p>
-                    <p className="text-xs">
-                      {concordiumState.isConnected 
-                        ? `Connected: ${concordiumState.account?.slice(0, 10)}...${concordiumState.account?.slice(-6)}`
-                        : 'Click "Pay with CCD" to connect your wallet'
-                      }
-                    </p>
-                    <p className="text-xs opacity-75">
-                      Amount: ~{((state.totalAmount + (hasEscrowItems ? state.totalAmount * 0.02 : 0)) * 10).toFixed(2)} CCD
-                    </p>
-                  </div>
-                </div>
-              )}
+
               
               {paymentMethod === 'avax' && (
                 <div className="flex items-center gap-2 text-sm text-orange-600 bg-orange-50 dark:bg-orange-950/20 p-3 rounded">
@@ -749,13 +675,11 @@ export function CartSheet() {
                   {isProcessing ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      {paymentMethod === 'card' ? 'Opening PayStack...' : 
-                       paymentMethod === 'avax' ? 'Depositing USDT...' : 'Processing...'}
+                      {paymentMethod === 'card' ? 'Opening PayStack...' : 'Depositing USDT...'}
                     </>
                   ) : (
                     <>
-                      {paymentMethod === 'card' ? 'Pay with Card' : 
-                       paymentMethod === 'avax' ? 'Pay with USDT (Avalanche)' : 'Pay with CCD'}
+                      {paymentMethod === 'card' ? 'Pay with Card' : 'Pay with USDT (Avalanche)'}
                     </>
                   )}
                 </Button>

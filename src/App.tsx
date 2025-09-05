@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { AvalancheProvider } from "@/contexts/AvalancheContext";
-import { ConcordiumProvider } from "@/contexts/ConcordiumContext";
+
 import { CartProvider } from "@/contexts/CartContext";
 import { CartSheet } from "@/components/ShoppingCart";
 import { Navigation } from "@/components/Navigation";
@@ -41,8 +41,7 @@ export default function App() {
 
   return (
     <AvalancheProvider>
-      <ConcordiumProvider>
-        <CartProvider>
+      <CartProvider>
           <ErrorBoundary>
             <div className="relative">
               <Navigation />
@@ -65,7 +64,6 @@ export default function App() {
             </div>
           </ErrorBoundary>
         </CartProvider>
-      </ConcordiumProvider>
     </AvalancheProvider>
   );
 }
