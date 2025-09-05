@@ -559,7 +559,7 @@ export function CartSheet() {
             <DialogDescription>
               {orderSuccess 
                 ? 'Your order has been placed successfully!'
-                : `Complete your ${paymentMethod === 'card' ? 'card payment with Paystack' : 'USDT escrow deposit (Avalanche)'}'
+                : `Complete your ${paymentMethod === 'card' ? 'card payment with Paystack' : 'USDT escrow deposit (Avalanche)'}`
               }
             </DialogDescription>
           </DialogHeader>
