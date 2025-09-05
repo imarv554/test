@@ -1,6 +1,6 @@
 # CREDIFY Smart Contracts
 
-This directory contains the Rust smart contracts for the CREDIFY identity-first e-commerce platform, designed to run on the Concordium blockchain mainnet.
+Legacy: This directory contains older Rust smart contracts targeting the Concordium chain. The active production contracts are Solidity EVM contracts located under /avalanche (VendorPass + Escrow).
 
 ## Overview
 

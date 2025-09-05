@@ -1,6 +1,6 @@
 # CREDIFY - Identity-First Commerce Revolution
 
-**🚀 A fully functional identity-verified e-commerce platform powered by Concordium blockchain**
+**🚀 A fully functional identity-verified e-commerce platform powered by Avalanche C-Chain (USDT escrow)**
 
 CREDIFY transforms online commerce by making identity verification the foundation of trust, eliminating fraud while protecting user privacy through zero-knowledge proofs.
 
@@ -9,7 +9,7 @@ CREDIFY transforms online commerce by making identity verification the foundatio
 **Live Preview**: https://credify-platform-f814f160.scout.site  
 *Replace with your own domain after deployment*
 
-**Concordium Mainnet Address**: `3SwtbfyHrT68giUKV6FzDAxBBPo9xbsLgjG34U3UXfJrNJFxbL`
+**Avalanche C-Chain Explorer**: https://snowtrace.io
 
 ## ✨ Features
 
@@ -23,7 +23,7 @@ CREDIFY transforms online commerce by making identity verification the foundatio
 - **Smart Contract Escrow**: Automated, secure transactions with dispute resolution
 - **Non-Transferable Reputation Tokens**: Build portable trust across platforms
 - **DAO-Based Dispute Resolution**: Community-driven conflict resolution
-- **Concordium Mainnet Integration**: Production-ready blockchain infrastructure
+- **Avalanche C-Chain Integration**: Production-ready USDT escrow on EVM
 
 ### 🛒 Advanced E-commerce
 - **Age-Restricted Product Support**: Secure sales of regulated goods
@@ -46,18 +46,18 @@ src/
 │   ├── ui/              # shadcn/ui components
 │   ├── ProductCard.tsx  # Product display component
 │   ├── ShoppingCart.tsx # Shopping cart functionality
-│   ├── WalletConnection.tsx # Concordium wallet integration
+│   ├── WalletConnection.tsx # Avalanche (MetaMask) wallet integration
 │   └── AgeVerification.tsx # Zero-knowledge age verification
 ├── contexts/            # React contexts for state management
 │   ├── CartContext.tsx  # Shopping cart state
-│   └── ConcordiumContext.tsx # Blockchain integration
+│   └── AvalancheContext.tsx # Blockchain integration
 ├── pages/               # Main application pages
 │   ├── MarketplacePage.tsx # Product catalog and shopping
 │   └── SellerDashboard.tsx # Seller management interface
 └── lib/                 # Utility functions and types
 ```
 
-### Smart Contracts (Rust)
+### Smart Contracts (Solidity, EVM)
 ```
 contracts/
 ├── src/
@@ -70,8 +70,8 @@ contracts/
 ### Key Technologies
 - **Frontend**: Vite + React 19 + TypeScript + TailwindCSS V4
 - **UI Components**: shadcn/ui + Lucide icons
-- **Blockchain**: Concordium Web SDK for mainnet integration
-- **Smart Contracts**: Rust with Concordium SDK
+- **Blockchain**: Avalanche C-Chain (EVM) with Ethers.js + MetaMask
+- **Smart Contracts**: Solidity + Hardhat (see /avalanche)
 - **Package Manager**: Bun for fast development
 - **Deployment**: Production-ready with multiple hosting options
 
@@ -81,7 +81,7 @@ contracts/
 - Node.js 20+
 - Bun package manager
 - Rust (for smart contracts)
-- Concordium Browser Wallet extension
+- MetaMask (Avalanche network)
 
 ### Installation
 
@@ -118,17 +118,18 @@ cd contracts
 ./build.sh
 ```
 
-3. **Deploy to Concordium mainnet** (requires funded account):
+3. **Deploy to Avalanche mainnet (C-Chain)** (requires funded account):
 ```bash
-concordium-client module deploy credify_escrow.wasm.v1 --sender YOUR_ACCOUNT
-concordium-client module deploy credify_reputation.wasm.v1 --sender YOUR_ACCOUNT  
-concordium-client module deploy credify_dispute.wasm.v1 --sender YOUR_ACCOUNT
+cd avalanche
+npm install
+npx hardhat run scripts/deploy.js --network avalanche
+# Copy printed VITE_VENDORPASS and VITE_ESCROW into Netlify env
 ```
 
 ## 💡 How It Works
 
 ### 1. Identity Verification
-Users connect their Concordium wallet and complete identity verification through zero-knowledge proofs. This enables age-restricted purchases without revealing personal information.
+Admins mint a non‑transferable VendorPass NFT to verified vendors on Avalanche. Buyers can purchase with USDT escrow; age/identity checks are enforced by platform policy and off‑chain KYC if required.
 
 ### 2. Smart Contract Escrow
 When a purchase is made, funds are held in a smart contract escrow until the buyer confirms receipt. This protects both parties and enables automated dispute resolution.
@@ -142,12 +143,12 @@ If disputes arise, the community votes on resolutions using a DAO-based system w
 ## 🔧 Configuration
 
 ### Environment Variables
-Create a `.env` file in the root directory:
+Set these in Netlify (Site settings → Environment):
 ```env
-VITE_CONCORDIUM_NETWORK=mainnet
-VITE_ESCROW_CONTRACT_ADDRESS=<deployed_contract_address>
-VITE_REPUTATION_CONTRACT_ADDRESS=<deployed_contract_address>
-VITE_DISPUTE_CONTRACT_ADDRESS=<deployed_contract_address>
+VITE_RPC_URL=https://api.avax.network/ext/bc/C/rpc
+VITE_USDT=0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7
+VITE_VENDORPASS=<deployed_vendorpass_address>
+VITE_ESCROW=<deployed_escrow_address>
 ```
 
 ### Contract Deployment
@@ -217,7 +218,7 @@ For technical support or questions:
 ## 🏆 Key Achievements
 
 ✅ **Fully Functional MVP**: Complete e-commerce platform with all core features  
-✅ **Blockchain Integration**: Production-ready Concordium mainnet deployment  
+✅ **Blockchain Integration**: Avalanche mainnet USDT escrow (EVM)  
 ✅ **Smart Contracts**: Escrow, reputation, and dispute resolution systems  
 ✅ **Mobile Responsive**: Touch-friendly design across all devices  
 ✅ **Zero-Knowledge Proofs**: Privacy-preserving identity verification  
