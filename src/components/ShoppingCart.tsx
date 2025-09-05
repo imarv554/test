@@ -499,7 +499,7 @@ export function CartSheet() {
                   onClick={handleAVAXCheckout}
                 >
                   <Zap className="w-4 h-4 mr-2" />
-                  Pay with USDC (Avalanche) {!avalancheState.isConnected && '(Connect MetaMask)'}
+                  Pay with USDT (Avalanche) {!avalancheState.isConnected && '(Connect MetaMask)'}
                 </Button>
                 
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">

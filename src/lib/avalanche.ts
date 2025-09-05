@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 export const AVALANCHE = {
   chainId: 43114,
   rpcUrl: import.meta.env.VITE_RPC_URL || "https://api.avax.network/ext/bc/C/rpc",
-  usdc: import.meta.env.VITE_USDC,
+  usdt: import.meta.env.VITE_USDT,
   escrow: import.meta.env.VITE_ESCROW,
   vendorPass: import.meta.env.VITE_VENDORPASS
 };
@@ -46,10 +46,10 @@ export async function isVendor(addr: string): Promise<boolean> {
   return vp.isVendor(addr);
 }
 
-export async function approveUsdcIfNeeded(owner: string, amount: bigint) {
-  if (!AVALANCHE.usdc || !AVALANCHE.escrow) throw new Error("Missing USDC/ESCROW env");
+export async function approveUsdtIfNeeded(owner: string, amount: bigint) {
+  if (!AVALANCHE.usdt || !AVALANCHE.escrow) throw new Error("Missing USDT/ESCROW env");
   const signer = await getSigner();
-  const erc20 = new ethers.Contract(AVALANCHE.usdc, ERC20_ABI, signer);
+  const erc20 = new ethers.Contract(AVALANCHE.usdt, ERC20_ABI, signer);
   const allowance: bigint = await erc20.allowance(owner, AVALANCHE.escrow);
   if (allowance < amount) {
     await (await erc20.approve(AVALANCHE.escrow, amount)).wait();
@@ -57,11 +57,11 @@ export async function approveUsdcIfNeeded(owner: string, amount: bigint) {
 }
 
 export async function createEscrowOrder(vendor: string, usdAmount: number, orderRef: string) {
-  if (!AVALANCHE.escrow || !AVALANCHE.usdc) throw new Error("Missing env");
+  if (!AVALANCHE.escrow || !AVALANCHE.usdt) throw new Error("Missing env");
   const signer = await getSigner();
   const addr = await signer.getAddress();
-  const amount: bigint = BigInt(Math.round(usdAmount * 1_000_000)); // USDC 6 decimals
-  await approveUsdcIfNeeded(addr, amount);
+  const amount: bigint = BigInt(Math.round(usdAmount * 1_000_000)); // USDT 6 decimals
+  await approveUsdtIfNeeded(addr, amount);
   const escrow = new ethers.Contract(AVALANCHE.escrow, ESCROW_ABI, signer);
   const tx = await escrow.createOrder(vendor, amount, orderRef);
   return tx.wait();
