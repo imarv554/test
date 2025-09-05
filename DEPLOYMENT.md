@@ -70,7 +70,7 @@ netlify deploy --prod --dir=dist --site=credifymvp
 
 Currently, no environment variables are required for the frontend. The application uses:
 - Mock data for development/testing
-- Concordium blockchain integration (client-side)
+- Avalanche USDT escrow client (EVM, MetaMask)
 - No server-side API dependencies in current build
 
 ## Post-Deployment Checklist
@@ -81,7 +81,7 @@ After deployment, verify:
 2. **Navigation works**: Click "Start Shopping" and "Become a Seller"
 3. **SPA routing**: Test direct URL access like `/marketplace`
 4. **Mobile responsiveness**: Test on mobile devices
-5. **Concordium wallet integration**: Install browser wallet and test connection
+5. **MetaMask (Avalanche) integration**: Connect MetaMask to Avalanche C-Chain and test escrow deposit
 
 ## Troubleshooting
 

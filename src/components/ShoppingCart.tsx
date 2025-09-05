@@ -552,14 +552,14 @@ export function CartSheet() {
               ) : (
                 <>
                   {paymentMethod === 'card' ? <CreditCard className="w-5 h-5" /> : <Coins className="w-5 h-5" />}
-                  {paymentMethod === 'card' ? 'Card Payment' : 'CCD Payment'}
+                  {paymentMethod === 'card' ? 'Card Payment' : 'On‑chain Escrow (USDT)'}
                 </>
               )}
             </DialogTitle>
             <DialogDescription>
               {orderSuccess 
                 ? 'Your order has been placed successfully!'
-                : `Complete your payment with ${paymentMethod === 'card' ? 'PayStack secure payment' : 'Concordium CCD'}`
+                : `Complete your ${paymentMethod === 'card' ? 'card payment with Paystack' : 'USDT escrow deposit (Avalanche)'}'
               }
             </DialogDescription>
           </DialogHeader>
@@ -700,15 +700,15 @@ export function CartSheet() {
                 <div className="flex items-center gap-2 text-sm text-orange-600 bg-orange-50 dark:bg-orange-950/20 p-3 rounded">
                   <Zap className="w-4 h-4" />
                   <div className="flex-1">
-                    <p className="font-medium">Avalanche AVAX Payment</p>
+                    <p className="font-medium">USDT (Avalanche) Escrow</p>
                     <p className="text-xs">
                       {avalancheState.isConnected 
                         ? `Connected: ${avalancheState.account?.slice(0, 10)}...${avalancheState.account?.slice(-6)}`
-                        : 'Click "Pay with AVAX" to connect MetaMask wallet'
+                        : 'Click "Pay with USDT (Avalanche)" to connect MetaMask'
                       }
                     </p>
                     <p className="text-xs opacity-75">
-                      Amount: Live rate from CoinGecko API
+                      Amount: denominated in USDT (6 decimals)
                     </p>
                   </div>
                 </div>
@@ -750,12 +750,12 @@ export function CartSheet() {
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       {paymentMethod === 'card' ? 'Opening PayStack...' : 
-                       paymentMethod === 'avax' ? 'Processing AVAX...' : 'Processing...'}
+                       paymentMethod === 'avax' ? 'Depositing USDT...' : 'Processing...'}
                     </>
                   ) : (
                     <>
                       {paymentMethod === 'card' ? 'Pay with Card' : 
-                       paymentMethod === 'avax' ? 'Pay with AVAX' : 'Pay with CCD'}
+                       paymentMethod === 'avax' ? 'Pay with USDT (Avalanche)' : 'Pay with CCD'}
                     </>
                   )}
                 </Button>
