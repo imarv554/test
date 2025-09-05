@@ -47,7 +47,7 @@ export function HomePage() {
           
           <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
             The world's first <span className="text-primary font-semibold">identity-verified e-commerce platform</span> powered by 
-            Concordium blockchain. Zero-knowledge proofs, cryptographic trust, and privacy-preserving compliance.
+            Avalanche C-Chain with USDT escrow. Cryptographic trust and privacy-preserving compliance.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
@@ -109,7 +109,7 @@ export function HomePage() {
                   <Lock className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Smart Contract Escrow</h3>
-                <p className="text-sm text-muted-foreground">Automated, secure transactions with built-in dispute resolution on Concordium blockchain</p>
+                <p className="text-sm text-muted-foreground">Automated, secure transactions with built-in dispute resolution on Avalanche C-Chain (USDT)</p>
               </Card>
               
               <Card className="p-6 border-border/50 hover:border-primary/30 transition-colors">
@@ -139,7 +139,7 @@ export function HomePage() {
                   1
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Verify Identity</h3>
-                <p className="text-sm text-muted-foreground">Connect your Concordium wallet and complete zero-knowledge identity verification</p>
+                <p className="text-sm text-muted-foreground">Connect your MetaMask wallet on Avalanche C-Chain and checkout with USDT escrow</p>
               </div>
               
               <div className="text-center">
