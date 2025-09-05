@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "start": "node server.js",
     "chain:compile": "hardhat --config avalanche/hardhat.config.js compile",
-    "chain:deploy": "hardhat --config avalanche/hardhat.config.js run avalanche/scripts/deploy.js --network avalanche"
+    "chain:deploy": "hardhat --config avalanche/hardhat.config.js run avalanche/scripts/deploy.js --network avalanche",
+    "chain:mintVendor": "hardhat --config avalanche/hardhat.config.js run avalanche/scripts/mintVendor.js --network avalanche"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.832.0",
