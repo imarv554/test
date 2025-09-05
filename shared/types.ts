@@ -24,6 +24,7 @@ export interface Product {
   price: number;
   currency: 'USD' | 'EUR' | 'CCD'; // CCD = Concordium
   images: string[];
+  vendorWallet?: string;
   category: ProductCategory;
   seller: {
     id: string;
